@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/input_field.dart';
-import '../widgets/submit_button.dart';
 import '../widgets/mobile_animation.dart';
 import '../utils/storage.dart';
 
@@ -15,6 +14,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  String savedEmail = "";
+  String savedPassword = "";
+
   void _saveData() {
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
@@ -26,16 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
           backgroundColor: Colors.red,
         ),
       );
-      return; // Stop execution if fields are empty
+      return;
     }
 
-    Storage.saveCredentials(email, password);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Credentials Saved Successfully!"),
-        backgroundColor: Colors.green,
-      ),
-    );
+    setState(() {
+      savedEmail = email;
+      savedPassword = password;
+    });
 
     emailController.clear();
     passwordController.clear();
@@ -47,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF00B4DB), Color(0xFF0083B0)], // Attractive Blue Gradient
+            colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -58,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Title at the Top
+                // Title
                 const Text(
                   "Flutter Form",
                   style: TextStyle(
@@ -69,11 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Animation Below Title
+                // Animation
                 const MobileAnimation(),
                 const SizedBox(height: 30),
 
-                // Card for Input Fields
+                // Input Card
                 Card(
                   elevation: 10,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -91,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         InputField(controller: passwordController, hintText: "Enter Password", isPassword: true),
                         const SizedBox(height: 20),
 
-                        // Submit Button with Gradient Effect
+                        // Save Button
                         GestureDetector(
                           onTap: _saveData,
                           child: Container(
@@ -100,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
                               gradient: const LinearGradient(
-                                colors: [Color(0xFFff9966), Color(0xFFff5e62)], // Orange Gradient
+                                colors: [Color(0xFFff9966), Color(0xFFff5e62)],
                               ),
                               boxShadow: [
                                 BoxShadow(
@@ -112,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             child: const Center(
                               child: Text(
-                                "Submit",
+                                "Save",
                                 style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
                               ),
                             ),
@@ -122,6 +121,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 30),
+
+                // Output Section
+                const Text(
+                  "Output",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                ),
+
+                if (savedEmail.isNotEmpty && savedPassword.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text("E-mail: $savedEmail", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text("Password: $savedPassword", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ],
               ],
             ),
           ),
